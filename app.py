@@ -6,7 +6,9 @@ from streamlit_autorefresh import st_autorefresh
 from datetime import datetime
 import pytz
 import requests
-import sqlite3 # MENGIMPOR MODUL DATABASE BAWAAN PYTHON
+import sqlite3
+import matplotlib.pyplot as plt
+plt.style.use('dark_background')
 
 # ==========================================
 # 0. INISIALISASI DATABASE (NEW)
@@ -450,7 +452,7 @@ with st.sidebar:
     periode_input = st.selectbox("RENTANG GRAFIK", ["1mo", "3mo", "6mo", "1y"], index=1)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("LAPORAN MANUAL", use_container_width=True):
+    if st.sidebar.button("LAPORAN MANUAL", type="primary"):
         with st.spinner("AI ... Mengkalkulasi..."):
             try:
                 hasil_ai = analisis_ai_semua(data_saham, makro)

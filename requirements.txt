@@ -5,3 +5,4 @@ gnews
 requests
 pytz
 streamlit-autorefresh
+matplotlib
