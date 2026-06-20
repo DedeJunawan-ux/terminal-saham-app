@@ -1,0 +1,7 @@
+.streamlit/
+terminal_saham.db
+.venv/
+env_saham/
+tes_ai.py
+test_db.py
+__pycache__/
