@@ -3,8 +3,28 @@ import sqlite3
 import hashlib
 from datetime import datetime
 
+# ==========================================
+# INISIALISASI DATABASE (WAJIB DI CLOUD)
+# ==========================================
+def init_db():
+    conn = sqlite3.connect('terminal_saham.db')
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS riwayat_laporan (id INTEGER PRIMARY KEY AUTOINCREMENT, waktu TEXT, laporan TEXT)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password TEXT, nama_bank TEXT)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS dompet (username TEXT PRIMARY KEY, total_deposit REAL, sisa_saldo REAL)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS kepemilikan (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, ticker TEXT, lot INTEGER, harga_avg REAL)''')
+    conn.commit()
+    conn.close()
+
+# Jalankan perakit database saat landing page dibuka
+init_db()
+
 def hash_password(password):
     return hashlib.sha256(str.encode(password)).hexdigest()
+
+# ==========================================
+# CSS: SOLID DARK MODE + ANIMATED BACKGROUND & SAKURA
+# ==========================================
 
 # ==========================================
 # CSS: SOLID DARK MODE + ANIMATED BACKGROUND & SAKURA
