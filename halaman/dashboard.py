@@ -592,31 +592,32 @@ with tab_dompet:
                     st.rerun()
 
     with col_beli:
-        st.markdown('<p style="color:#fcd34d; font-weight:bold;">BELI SAHAM</p>', unsafe_allow_html=True)
+        st.markdown('<p style="color:#fcd34d; font-weight:bold;">🛒 BELI SAHAM</p>', unsafe_allow_html=True)
         with st.form("form_beli"):
             ticker_beli = st.text_input("Ticker Beli", "BBRI.JK").upper()
             lot_beli = st.number_input("Lot Beli", min_value=1, step=1)
             if st.form_submit_button("Beli"):
                 try:
-                    info_beli = yf.Ticker(ticker_beli).info
-                    harga_skrg = info_beli.get('currentPrice', info_beli.get('previousClose', 0))
-                    if harga_skrg > 0:
+                    # Menggunakan 5d agar aman saat akhir pekan (mengambil harga Jumat terakhir)
+                    df_cek = yf.Ticker(ticker_beli).history(period="5d")
+                    if not df_cek.empty:
+                        harga_skrg = df_cek['Close'].iloc[-1]
                         total_biaya = harga_skrg * lot_beli * 100
                         if sisa >= total_biaya:
                             c.execute("UPDATE dompet SET sisa_saldo=? WHERE username=?", (sisa - total_biaya, st.session_state['username']))
                             c.execute("INSERT INTO kepemilikan (username, ticker, lot, harga_avg) VALUES (?, ?, ?, ?)", (st.session_state['username'], ticker_beli, lot_beli, harga_skrg))
                             conn.commit()
-                            st.success(f"Beli {lot_beli} Lot sukses!")
+                            st.success(f"Beli {lot_beli} Lot sukses di harga Rp {harga_skrg:,.0f}!")
                             st.rerun()
                         else:
-                            st.error("Saldo RDN kurang!")
+                            st.error(f"Saldo RDN kurang! Butuh Rp {total_biaya:,.0f}")
                     else:
-                        st.error("Gagal menarik harga.")
-                except Exception:
-                    st.error("Gagal. Cek ticker (ex: BBRI.JK).")
+                        st.error("Gagal menarik harga dari bursa.")
+                except Exception as e:
+                    st.error(f"Gagal. Pastikan ticker benar (ex: BBRI.JK). Info: {e}")
 
     with col_jual:
-        st.markdown('<p style="color:#fca5a5; font-weight:bold;">JUAL SAHAM</p>', unsafe_allow_html=True)
+        st.markdown('<p style="color:#fca5a5; font-weight:bold;">📉 JUAL SAHAM</p>', unsafe_allow_html=True)
         with st.form("form_jual"):
             ticker_jual = st.text_input("Ticker Jual", "BBRI.JK").upper()
             lot_jual = st.number_input("Lot Jual", min_value=1, step=1)
@@ -625,10 +626,12 @@ with tab_dompet:
                 total_owned = c.fetchone()[0] or 0
                 if total_owned >= lot_jual:
                     try:
-                        info_jual = yf.Ticker(ticker_jual).info
-                        harga_skrg = info_jual.get('currentPrice', info_jual.get('previousClose', 0))
-                        if harga_skrg > 0:
+                        # Menggunakan 5d agar aman saat akhir pekan
+                        df_cek_jual = yf.Ticker(ticker_jual).history(period="5d")
+                        if not df_cek_jual.empty:
+                            harga_skrg = df_cek_jual['Close'].iloc[-1]
                             uang_masuk = harga_skrg * lot_jual * 100
+                            
                             c.execute("UPDATE dompet SET sisa_saldo = sisa_saldo + ? WHERE username=?", (uang_masuk, st.session_state['username']))
                             sisa_jual = lot_jual
                             c.execute("SELECT id, lot FROM kepemilikan WHERE username=? AND ticker=? ORDER BY id ASC", (st.session_state['username'], ticker_jual))
@@ -641,15 +644,15 @@ with tab_dompet:
                                     c.execute("UPDATE kepemilikan SET lot = lot - ? WHERE id=?", (sisa_jual, row_id))
                                     sisa_jual = 0
                             conn.commit()
-                            st.success(f"Terjual! Saldo bertambah Rp {uang_masuk:,.0f}.")
+                            st.success(f"Terjual! Saldo bertambah Rp {uang_masuk:,.0f} (Harga Rp {harga_skrg:,.0f}).")
                             st.rerun()
                         else:
-                            st.error("Gagal menarik harga.")
-                    except Exception:
-                        st.error("Gagal menghubungi pasar.")
+                            st.error("Gagal menarik harga terbaru.")
+                    except Exception as e:
+                        st.error(f"Gagal menghubungi pasar. Info: {e}")
                 else:
                     st.error(f"Gagal. Kamu hanya punya {total_owned} Lot.")
-
+                    
     st.divider()
 
     st.markdown('<p style="color:#c084fc; font-weight:bold;">STATUS PORTOFOLIO & ESTIMASI DIVIDEN</p>', unsafe_allow_html=True)
