@@ -49,7 +49,7 @@ jam_sekarang = datetime.now(zona_wib).strftime("%Y-%m-%d-%H")
 if 'jam_terakhir_kirim' not in st.session_state:
     st.session_state['jam_terakhir_kirim'] = ""
 if 'laporan_terakhir' not in st.session_state:
-    st.session_state['laporan_terakhir'] = "データを待っています... / Menunggu data pasar..."
+    st.session_state['laporan_terakhir'] = "Menunggu data pasar..."
 if 'memori_chat' not in st.session_state:
     st.session_state['memori_chat'] = []
 
@@ -565,7 +565,7 @@ with tab_ai:
                     st.error(f"Gagal menghubungi server: {e}")
 
 with tab_dompet:
-    st.markdown('<p style="color:#f9a8d4; font-weight:bold; font-size:20px;">💳 RDN & PORTOFOLIO INVESTASI</p>', unsafe_allow_html=True)
+    st.markdown('<p style="color:#f9a8d4; font-weight:bold; font-size:20px;">RDN & PORTOFOLIO INVESTASI</p>', unsafe_allow_html=True)
 
     conn = sqlite3.connect('terminal_saham.db')
     c = conn.cursor()
@@ -592,7 +592,7 @@ with tab_dompet:
                     st.rerun()
 
     with col_beli:
-        st.markdown('<p style="color:#fcd34d; font-weight:bold;">🛒 BELI SAHAM</p>', unsafe_allow_html=True)
+        st.markdown('<p style="color:#fcd34d; font-weight:bold;">BELI SAHAM</p>', unsafe_allow_html=True)
         with st.form("form_beli"):
             ticker_beli = st.text_input("Ticker Beli", "BBRI.JK").upper()
             lot_beli = st.number_input("Lot Beli", min_value=1, step=1)
@@ -617,7 +617,7 @@ with tab_dompet:
                     st.error(f"Gagal. Pastikan ticker benar (ex: BBRI.JK). Info: {e}")
 
     with col_jual:
-        st.markdown('<p style="color:#fca5a5; font-weight:bold;">📉 JUAL SAHAM</p>', unsafe_allow_html=True)
+        st.markdown('<p style="color:#fca5a5; font-weight:bold;">JUAL SAHAM</p>', unsafe_allow_html=True)
         with st.form("form_jual"):
             ticker_jual = st.text_input("Ticker Jual", "BBRI.JK").upper()
             lot_jual = st.number_input("Lot Jual", min_value=1, step=1)
@@ -652,7 +652,7 @@ with tab_dompet:
                         st.error(f"Gagal menghubungi pasar. Info: {e}")
                 else:
                     st.error(f"Gagal. Kamu hanya punya {total_owned} Lot.")
-                    
+
     st.divider()
 
     st.markdown('<p style="color:#c084fc; font-weight:bold;">STATUS PORTOFOLIO & ESTIMASI DIVIDEN</p>', unsafe_allow_html=True)
