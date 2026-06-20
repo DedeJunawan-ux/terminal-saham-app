@@ -7,8 +7,6 @@ from datetime import datetime
 import pytz
 import requests
 import sqlite3
-import matplotlib.pyplot as plt
-plt.style.use('dark_background')
 
 # ==========================================
 # 0. INISIALISASI DATABASE (NEW)
@@ -64,6 +62,8 @@ if 'jam_terakhir_kirim' not in st.session_state:
     st.session_state['jam_terakhir_kirim'] = ""
 if 'laporan_terakhir' not in st.session_state:
     st.session_state['laporan_terakhir'] = "データを待っています... / Menunggu data pasar..."
+if 'memori_chat' not in st.session_state:
+    st.session_state['memori_chat'] = []
 
 # ==========================================
 # 2. CSS ANIME THEME
@@ -239,7 +239,6 @@ st.markdown("""
     .anime-terminal-body::before { content: '> '; color: #f472b6; font-weight: bold; }
 </style>
 
-<!-- Sakura Petals -->
 <div class="sakura-wrap">
     <div class="petal">🌸</div><div class="petal">🌸</div><div class="petal">🌸</div>
     <div class="petal">🌸</div><div class="petal">🌸</div>
@@ -472,9 +471,9 @@ with st.sidebar:
                 st.error(f"KEGAGALAN: {e}")
 
 # ==========================================
-# 7. TAB UTAMA
+# 7. TAB UTAMA (DENGAN TAB AI BARU)
 # ==========================================
-tab_screener, tab_riset = st.tabs(["RADAR PORTOFOLIO", "ANALISIS SPESIFIK"])
+tab_screener, tab_riset, tab_ai = st.tabs(["RADAR PORTOFOLIO", "ANALISIS SPESIFIK", "TANYA AI"])
 
 with tab_screener:
     kol_inv, col_trd = st.columns(2)
@@ -538,3 +537,48 @@ with tab_riset:
                 st.info("Tidak ada data terdeteksi.")
     else:
         st.error("GAGAL MENGAKSES DATA — Periksa kode ticker.")
+
+# TAB BARU: CHAT AI
+with tab_ai:
+    st.markdown('<p style="color:#f9a8d4; font-weight:bold;">TERMINAL KOMUNIKASI AI</p>', unsafe_allow_html=True)
+    
+    # Menampilkan riwayat chat sebelumnya
+    for pesan in st.session_state['memori_chat']:
+        with st.chat_message(pesan["role"]):
+            st.markdown(pesan["content"])
+            
+    # Kolom input chat di bagian bawah
+    prompt_user = st.chat_input("Tanyakan sesuatu tentang emiten atau analisis pasar...")
+    if prompt_user:
+        # 1. Tampilkan pertanyaan user
+        st.session_state['memori_chat'].append({"role": "user", "content": prompt_user})
+        with st.chat_message("user"):
+            st.markdown(prompt_user)
+            
+        # 2. Panggil Groq AI
+        with st.chat_message("assistant"):
+            with st.spinner("AI Memproses..."):
+                headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
+                
+                # Susun pesan untuk AI (System prompt + History)
+                pesan_api = [{"role": "system", "content": "Kamu adalah asisten AI ahli pasar modal Indonesia. Jawab dengan gaya profesional, ringkas, dan bernada cyberpunk/hacker. Jangan gunakan emoji."}]
+                pesan_api.extend(st.session_state['memori_chat'])
+                
+                payload = {
+                    "model": "llama-3.3-70b-versatile",
+                    "messages": pesan_api,
+                    "temperature": 0.5,
+                    "max_tokens": 1000
+                }
+                
+                try:
+                    r = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload, timeout=30)
+                    if r.status_code == 200:
+                        jawaban_ai = r.json()["choices"][0]["message"]["content"]
+                        st.markdown(jawaban_ai)
+                        # Simpan jawaban ke memori
+                        st.session_state['memori_chat'].append({"role": "assistant", "content": jawaban_ai})
+                    else:
+                        st.error(f"Koneksi AI Terputus: {r.status_code}")
+                except Exception as e:
+                    st.error(f"Gagal menghubungi server: {e}")
