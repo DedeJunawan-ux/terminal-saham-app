@@ -60,15 +60,17 @@ st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700;900&family=Noto+Sans+JP:wght@300;400;700&family=M+PLUS+Rounded+1c:wght@300;400;700;800&family=Kosugi+Maru&display=swap');
 
-    /* ─── MODIFIKASI HEADER UNTUK MOBILE ─── */
+    /* ─── PENGHILANG MENU & PEMBASMI LOGO GITHUB ─── */
     header { background: transparent !important; }
     [data-testid="stHeader"] { background: transparent !important; }
     #MainMenu { visibility: hidden; }
     footer { visibility: hidden; }
-    .block-container {
-        padding-top: 0 !important;
-        padding-bottom: 2rem !important;
-        max-width: 99% !important;
+    .block-container { padding-top: 0 !important; padding-bottom: 2rem !important; max-width: 99% !important; }
+    
+    /* Menghilangkan tombol Fork, Toolbar, dan Badge Streamlit Cloud */
+    [data-testid="stToolbar"] { display: none !important; }
+    .viewerBadge_container { display: none !important; }
+    .viewerBadge_link { display: none !important; }
     }
 
     /* ─── KEYFRAME ANIMATIONS ─── */

@@ -34,6 +34,17 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
     /* ─── PENGHILANG MENU BAWAAN STREAMLIT ─── */
+            
+    header { background: transparent !important; }
+    [data-testid="stHeader"] { background: transparent !important; }
+    #MainMenu { visibility: hidden; }
+    footer { visibility: hidden; }
+    .block-container { padding-top: 2rem !important; max-width: 1100px !important; }
+    
+    /* TAMBAHAN BARU: PEMBASMI TOMBOL FORK & GITHUB CLOUD */
+    [data-testid="stToolbar"] { display: none !important; }
+    .viewerBadge_container { display: none !important; }
+    .viewerBadge_link { display: none !important; }
     header { background: transparent !important; }
     [data-testid="stHeader"] { background: transparent !important; }
     #MainMenu { visibility: hidden; }
