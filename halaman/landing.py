@@ -2,7 +2,9 @@ import streamlit as st
 import sqlite3
 import hashlib
 from datetime import datetime
+import pytz
 
+zona_wib = pytz.timezone('Asia/Jakarta')
 # ==========================================
 # INISIALISASI DATABASE (WAJIB DI CLOUD)
 # ==========================================
@@ -255,9 +257,27 @@ with col_form:
 # ==========================================
 # FOOTER CLEAN
 # ==========================================
-tahun_sekarang = datetime.now().year
+tahun_sekarang = datetime.now(zona_wib).year
 
 st.markdown(f"""
+<style>
+/* CSS Khusus Footer */
+.footer-wrapper {{ margin-top: 80px; padding-top: 40px; padding-bottom: 20px; border-top: 1px solid rgba(51, 65, 85, 0.8); background-color: transparent; position: relative; z-index: 2; }}
+.footer-grid {{ display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 30px; max-width: 1200px; margin: 0 auto; padding: 0 20px; }}
+.footer-col h4 {{ color: #f8fafc; font-size: 14px; font-weight: 700; margin-top: 0; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }}
+.footer-col p {{ color: #94a3b8; font-size: 13px; line-height: 1.6; margin: 0; opacity: 0.8; }}
+.footer-links {{ list-style: none; padding: 0; margin: 0; }}
+.footer-links li {{ margin-bottom: 10px; font-size: 13px; color: #94a3b8; opacity: 0.8; transition: all 0.2s ease; cursor: pointer; }}
+.footer-links li:hover {{ color: #818cf8; opacity: 1; transform: translateX(5px); }}
+.footer-bottom {{ text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(51, 65, 85, 0.4); font-size: 12px; color: #64748b; letter-spacing: 1px; }}
+
+/* ─── RESPONSIVE MOBILE FIX (LAYAR HP) ─── */
+@media (max-width: 768px) {{
+    .footer-grid {{ grid-template-columns: 1fr; text-align: center; gap: 40px; }}
+    .footer-links li:hover {{ transform: scale(1.05); }}
+}}
+</style>
+
 <div class="footer-wrapper">
     <div class="footer-grid">
         <div class="footer-col">
