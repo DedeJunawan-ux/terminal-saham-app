@@ -59,16 +59,20 @@ if 'memori_chat' not in st.session_state:
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700;900&family=Noto+Sans+JP:wght@300;400;700&family=M+PLUS+Rounded+1c:wght@300;400;700;800&family=Kosugi+Maru&display=swap');
-
-    /* ─── PENGHILANG LOGO GITHUB & MENU DEPLOY (AMAN UNTUK NAVBAR) ─── */
-    .viewerBadge_container { display: none !important; }
-    .viewerBadge_link { display: none !important; }
+    /* PENGHILANG LOGO GITHUB & MENU DEPLOY (AMAN UNTUK NAVBAR) */
+    .viewerBadge_container, .viewerBadge_link, [data-testid="stToolbar"] { display: none !important; }
     
-    /* Cukup sembunyikan tombol Deploy/Titik Tiga, biarkan Header tetap ada */
-    [data-testid="stToolbar"] { visibility: hidden !important; }
-    
-    .block-container { padding-top: 2rem !important; padding-bottom: 2rem !important; max-width: 99% !important;
+    /* ─── MEMUNCULKAN KEMBALI TOMBOL SIDEBAR DI HP ─── */
+    header[data-testid="stHeader"] { background: transparent !important; z-index: 99999 !important; }
+    [data-testid="collapsedControl"] { 
+        z-index: 999999 !important; 
+        background-color: rgba(244, 114, 182, 0.15) !important; /* Latar pink transparan */
+        border: 1px solid rgba(244, 114, 182, 0.4) !important;
+        border-radius: 8px !important; 
+        margin: 15px !important;
     }
+    
+    .block-container { padding-top: 3rem !important; padding-bottom: 2rem !important; max-width: 99% !important; }
 
     /* ─── KEYFRAME ANIMATIONS ─── */
     @keyframes sakuraFall {
@@ -699,6 +703,9 @@ with tab_dompet:
 # ===========
 # FOOTER 
 # ===========
+# ==========================================
+# FOOTER RESPONSIVE (MOBILE & DESKTOP)
+# ==========================================
 try:
     tahun_sekarang = datetime.now(zona_wib).year
 except NameError:
@@ -712,14 +719,16 @@ st.markdown(f"""
 .footer-col h4 {{ color: #f9a8d4; font-size: 14px; font-weight: 700; margin-top: 0; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }}
 .footer-col p {{ color: #e9d5ff; font-size: 13px; line-height: 1.6; margin: 0; opacity: 0.8; }}
 .footer-links {{ list-style: none; padding: 0; margin: 0; }}
-.footer-links li {{ margin-bottom: 10px; font-size: 13px; color: #e9d5ff; opacity: 0.8; transition: all 0.2s ease; cursor: pointer; }}
+.footer-links li {{ margin-bottom: 10px; font-size: 13px; color: #e9d5ff; opacity: 0.8; transition: all 0.2s ease; cursor: pointer; display: flex; align-items: center; }}
 .footer-links li:hover {{ color: #c084fc; opacity: 1; transform: translateX(5px); }}
 .footer-bottom {{ text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(244, 114, 182, 0.1); font-size: 12px; color: rgba(233, 213, 255, 0.6); letter-spacing: 1px; }}
 
 /* ─── RESPONSIVE MOBILE FIX (LAYAR HP) ─── */
 @media (max-width: 768px) {{
-    .footer-grid {{ grid-template-columns: 1fr; text-align: center; gap: 40px; }}
-    .footer-links li:hover {{ transform: scale(1.05); }}
+    .footer-grid {{ grid-template-columns: 1fr; text-align: left; gap: 35px; padding: 0 15px; }}
+    .footer-col h4 {{ text-align: left; border-bottom: 1px solid rgba(244, 114, 182, 0.3); padding-bottom: 8px; margin-bottom: 12px; display: inline-block; width: auto; }}
+    .footer-col p {{ text-align: justify; }}
+    .footer-links li {{ text-align: left; justify-content: flex-start; margin-bottom: 12px; font-size: 14px; }}
 }}
 </style>
 
