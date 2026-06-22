@@ -6,3 +6,6 @@ requests
 pytz
 streamlit-autorefresh
 matplotlib
+pdfplumber
+beautifulsoup4
+plotly
